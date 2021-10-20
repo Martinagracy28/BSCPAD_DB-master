@@ -573,6 +573,7 @@ let accounts;
 main();
 
   }
+
  
     return (
       <div class=" text App" style={{backgroundColor:'black'}}>
@@ -617,12 +618,12 @@ main();
 <div>
     { total >= goal ?(
     <div>
-    <button class="btn btn-primary">Claim</button>
+    <button class="btn btn-primary" onClick={claim}>Claim</button>
 
     </div>):
 
     (<div>
-    <button class="btn btn-primary">Reclaim</button>
+    <button class="btn btn-primary" onClick={reclaim}>Reclaim</button>
     </div>)
     }
 </div>

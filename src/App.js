@@ -38,7 +38,7 @@ const connect = async()=>{
       ledger: 'TestNet'
     })
     .then(async (d) => {
-     let account = d[0].address;
+     let account = d[3].address;
      setaccount(account);
      localStorage.setItem("wallet",account)
      document.getElementById("cc").style.visibility="hidden"

@@ -573,6 +573,133 @@ let accounts;
 main();
 
   }
+   const optin = async (event) =>{
+ 
+
+const waitForConfirmation = async function (client, txId) {
+    let status = (await client.status().do());
+    let lastRound = status["last-round"];
+      while (true) {
+        const pendingInfo = await client.pendingTransactionInformation(txId).do();
+        if (pendingInfo["confirmed-round"] !== null && pendingInfo["confirmed-round"] > 0) {
+          //Got the completed Transaction
+          console.log("Transaction " + txId + " confirmed in round " + pendingInfo["confirmed-round"]);
+          break;
+        }
+        lastRound++;
+        await client.statusAfterBlock(lastRound).do();
+      }
+    };
+
+// optIn
+async function optInApp(client, account, index) {
+    // define sender
+    let sender = account;
+    console.log("sender complete", sender);
+    let txID;
+	// get node suggested parameters
+    let params = await client.getTransactionParams().do();
+    // comment out the next two lines to use suggested fee
+    params.fee = 1000;
+    params.flatFee = true;
+
+    // create unsigned transaction
+    let txn = algosdk.makeApplicationOptInTxn(sender, params, index);
+    console.log("txn complete")
+    let txId = txn.txID().toString();
+
+    // Sign the transaction
+    // let signedTxn = txn.signTxn(account.sk);
+    // console.log("Signed transaction with txID: %s", txId);
+
+    let txn_b64 = AlgoSigner.encoding.msgpackToBase64(txn.toByte());
+    let signedTxs = await AlgoSigner.signTxn([{txn:txn_b64}]);
+    console.log("txn signing")
+    let signedT = AlgoSigner.encoding.base64ToMsgpack(signedTxs[0].blob);
+    let transcat = await client.sendRawTransaction(signedT).do();
+    console.log("txn working")
+    await waitForConfirmation(client, transcat.txId);
+    // AlgoSigner.signTxn([{txn: txn_b64}])
+  
+    // .then(async (d) => {
+    //   let signedTxs = d;
+    //   // Submit the transaction
+    //   console.log("sign", signedTxs[0].blob);
+    // // await client.sendRawTransaction(signedTxs[0].blob).do();
+
+    // AlgoSigner.send({
+    //   ledger: 'TestNet',
+    //   tx: signedTxs[0].blob
+    // })
+    // .then((d) => {
+    //   txID = d;
+    //   // document.getElementById("txid").innerHTML = "Transaction ID : " + JSON.stringify(txID);
+    //   console.log(txID);
+    // })
+    // .catch((e) => {
+    //   console.error(e);
+    // });
+
+
+
+    // // Wait for confirmation
+    // await waitForConfirmation(client, txId);
+
+    // // display results
+    // let transactionResponse = await client.pendingTransactionInformation(txId).do();
+    // console.log("Opted-in to app-id:",transactionResponse['txn']['txn']['apid'])
+    // })
+     
+    //  .catch((e) => {
+    //      console.error(e);
+    //  });
+}
+
+
+
+
+
+async function main() {
+    try {
+    // initialize an algodClient
+    let algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
+
+    let appId = 39138100;
+    // opt-in to application
+    let accounts;
+    AlgoSigner.connect()
+    .then((d) => {
+      AlgoSigner.accounts({
+        ledger: 'TestNet'
+      })
+      .then(async (d) => {
+        accounts = d;
+      console.log("Address 1", d[0]);
+        await optInApp(algodClient, d[1].address, appId);
+      })
+      .catch((e) => {
+        console.error(e);
+      });
+    })
+    .catch((e) => {
+      console.error(e);
+    });
+
+
+
+
+   
+    }
+    catch (err){
+        console.log("err", err);  
+    }
+}
+
+main();
+first();
+
+    } 
+
  
     return (
       <div class=" text App" style={{backgroundColor:'black'}}>
@@ -617,12 +744,13 @@ main();
 <div>
     { total >= goal ?(
     <div>
-    <button class="btn btn-primary">Claim</button>
+    <button class="btn btn-primary" onClick={claim}>Claim</button>
 
     </div>):
 
     (<div>
-    <button class="btn btn-primary">Reclaim</button>
+       <button class="btn btn-primary" onClick={optin}>Reclaim</button><br></br>
+    <button class="btn btn-primary" onClick={reclaim}>Reclaim</button>
     </div>)
     }
 </div>

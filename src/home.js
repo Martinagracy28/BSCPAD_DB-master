@@ -126,6 +126,9 @@ const first = async () => {
     if(goal==0){
       setopt(true);
     }
+    else{
+      setopt(false);
+    }
     // read global state of application
     // var account = localStorage.getItem("wallet");
     // await readGlobalState(client, account, appId);   
@@ -235,7 +238,7 @@ async function main() {
       .then(async (d) => {
         accounts = d;
       console.log("Address 1", d[0]);
-        await optInApp(algodClient, d[1].address, appId);
+        await optInApp(algodClient, d[3].address, appId);
       })
       .catch((e) => {
         console.error(e);
