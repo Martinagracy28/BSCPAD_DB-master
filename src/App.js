@@ -8,6 +8,8 @@ import './App.css';
 import thirdpage from './thirdpage';
 import { useEffect } from "react";
 import { useState } from "react";
+import app1 from "./app1";
+import app2 from "./app2";
 
 import web3 from './web3';
 import tokencontract from './tokencontract';
@@ -107,6 +109,8 @@ History{' '}
     <Route exact path='/t' component={thirdpage}/> 
     <Route exact path='/t1' component={fourthpage}/>
       <Route  exact path='/s' component={secondpage}/>
+      <Route  exact path='/view1' component={app1}/>
+      <Route  exact path='/view2' component={app2}/>
     </Switch>
     
   </Router>

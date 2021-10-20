@@ -7,9 +7,14 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import fireDB from'./firebase';
 //import { data } from 'jquery';
 import { Card } from 'react-bootstrap';
+import {BrowserRouter as Router , Route , Link , Switch} from "react-router-dom";
 
 import { useEffect } from "react";
 import { useState } from "react";
+import app1 from "./app1.js";
+import app2 from "./app2.js";
+
+import { Button } from 'react-bootstrap';
 
 global.TextEncoder = require("util").TextEncoder; 
 const algosdk = require('algosdk');
@@ -57,16 +62,16 @@ async function readLocalState(client, account, index1, index2){
             console.log(accountInfoResponse['created-apps'][i]['params']['global-state'][n]);
             let enc = accountInfoResponse['created-apps'][i]['params']['global-state'][n];
             var decodedString = window.atob(enc.key);
-            if(decodedString == "StartDate"){
-              setstartdt(enc.value.uint);
-            }
-            else if(decodedString == "EndDate"){
-              setenddt(enc.value.uint);
-            }
-            else if(decodedString == "FundCloseDate"){
-              setclsdt(enc.value.uint);
-            }
-            else if(decodedString == "Total"){
+            // if(decodedString == "StartDate"){
+            //   setstartdt(enc.value.uint);
+            // }
+            // else if(decodedString == "EndDate"){
+            //   setenddt(enc.value.uint);
+            // }
+            // else if(decodedString == "FundCloseDate"){
+            //   setclsdt(enc.value.uint);
+            // }
+            if(decodedString == "Total"){
               settotal(enc.value.uint);
             }
             else if(decodedString == "Goal"){
@@ -92,16 +97,16 @@ async function readLocalState1(client, account, index1, index2){
             console.log(accountInfoResponse2['created-apps'][i]['params']['global-state'][n]);
             let enc = accountInfoResponse2['created-apps'][i]['params']['global-state'][n];
             var decodedString = window.atob(enc.key);
-            if(decodedString == "StartDate"){
-              setstartdt2(enc.value.uint);
-            }
-            else if(decodedString == "EndDate"){
-              setenddt2(enc.value.uint);
-            }
-            else if(decodedString == "FundCloseDate"){
-              setclsdt2(enc.value.uint);
-            }
-            else if(decodedString == "Total"){
+            // if(decodedString == "StartDate"){
+            //   setstartdt2(enc.value.uint);
+            // }
+            // else if(decodedString == "EndDate"){
+            //   setenddt2(enc.value.uint);
+            // }
+            // else if(decodedString == "FundCloseDate"){
+            //   setclsdt2(enc.value.uint);
+            // }
+             if(decodedString == "Total"){
               settotal2(enc.value.uint);
             }
             else if(decodedString == "Goal"){
@@ -178,13 +183,15 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
      
           <div className="card float-left bg-sky mt-2  shadow" style={{width: '25rem', marginRight: '2rem', marginBlockStart: '1rem', padding: "30px",backgroundColor:" #f2f2f2",color:"black"}} >
             <div className="card-body">
-            <p  style={{textAlign:"right", color:"red"}}>Closed:{(new Date(clsdt*1000)).toLocaleString()}</p>
+            {/* <p  style={{textAlign:"right", color:"red"}}>Closed:{(new Date(clsdt*1000)).toLocaleString()}</p> */}
+             <p  style={{textAlign:"right", color:"red"}}>Closed</p>
+            
               <h4>APPID</h4>
               <p>{ appid}</p>
               <h4>Goal</h4>
               <p>  { goal/1000000 }</p>
-              <h4>Fund start Date</h4>
-              <p>  {(new Date(stardt*1000)).toLocaleString() }</p>
+              {/* <h4>Fund start Date</h4> */}
+              {/* <p>  {(new Date(stardt*1000)).toLocaleString() }</p> */}
               <progress id="main7" value={total} max="1000000" class="progress11"></progress>
   <div class="row">
   <div class="col-4">
@@ -194,6 +201,23 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
    Total  Reached:{total/1000000} Algo<br/>
   </div>
 </div>
+
+<Link to="/view1" className="btn btn-primary">View</Link>
+
+               
+             
+<Router>
+          
+        
+      
+  
+          <Switch>
+    <Route exact path='/view1' component={app1}/>
+    
+    </Switch>
+    
+  </Router>
+    
               </div> 
           </div> 
           
@@ -202,13 +226,15 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
       <br></br>
  <div className="card float-left bg-sky mt-3  shadow" style={{width: '25rem', marginRight: '2rem', marginBlockStart: '1rem', padding: "30px",backgroundColor:" #f2f2f2",color:"black"}} >
             <div className="card-body">
-            <p  style={{textAlign:"right", color:"red"}}>Closed:{(new Date(clsdt2*1000)).toLocaleString()}</p>
+            {/* <p  style={{textAlign:"right", color:"red"}}>Closed:{(new Date(clsdt2*1000)).toLocaleString()}</p> */}
+              <p  style={{textAlign:"right", color:"red"}}>Closed</p>
+            
               <h4>APPID</h4>
               <p>{ appid2}</p>
               <h4>Goal</h4>
               <p>  { goal2/1000000 }</p>
-              <h4>Fund start Date</h4>
-              <p>  {(new Date(stardt2*1000)).toLocaleString() }</p>
+              {/* <h4>Fund start Date</h4>
+              <p>  {(new Date(stardt2*1000)).toLocaleString() }</p> */}
               <progress id="main7" value={total2} max="1000000" class="progress11"></progress>
   <div class="row">
   <div class="col-4">
@@ -218,6 +244,21 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
    Total  Reached:{total2/1000000} Algo<br/>
   </div>
 </div>
+<Link to="/view2" className="btn btn-primary">View</Link>
+
+               
+             
+<Router>
+          
+        
+      
+  
+          <Switch>
+    <Route exact path='/view2' component={app2}/>
+    
+    </Switch>
+    
+  </Router>
               </div> 
           </div> 
           
