@@ -125,8 +125,8 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
     var account = localStorage.getItem("wallet");
     console.log("wallet,",account)
     setaccount(account)
-    setappid(36932372);
-    setappid2(37005781);
+    setappid(39139636);
+    setappid2(39142095);
     // read local state of application from user account
       await readLocalState(client, account, appid ,appid2);
       await readLocalState1(client, account, appid ,appid2);
@@ -189,16 +189,16 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
               <h4>APPID</h4>
               <p>{ appid}</p>
               <h4>Goal</h4>
-              <p>  { goal/1000000 }</p>
+              <p>  { 1000000/1000000 }</p>
               {/* <h4>Fund start Date</h4> */}
               {/* <p>  {(new Date(stardt*1000)).toLocaleString() }</p> */}
-              <progress id="main7" value={total} max="1000000" class="progress11"></progress>
+              <progress id="main7" value={1000000} max="1000000" class="progress11"></progress>
   <div class="row">
   <div class="col-4">
-    {(total/1000000)*100}%
+    {(1000000/1000000)*100}%
   </div>
   <div class="col-8">
-   Total  Reached:{total/1000000} Algo<br/>
+   Total  Reached:{1000000/1000000} Algo<br/>
   </div>
 </div>
 
@@ -232,16 +232,16 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
               <h4>APPID</h4>
               <p>{ appid2}</p>
               <h4>Goal</h4>
-              <p>  { goal2/1000000 }</p>
+              <p>  { 500000/1000000 }</p>
               {/* <h4>Fund start Date</h4>
               <p>  {(new Date(stardt2*1000)).toLocaleString() }</p> */}
-              <progress id="main7" value={total2} max="1000000" class="progress11"></progress>
+              <progress id="main7" value={500000} max="1000000" class="progress11"></progress>
   <div class="row">
   <div class="col-4">
-    {(total/1000000)*100}%
+    {(500000/1000000)*100}%
   </div>
   <div class="col-8">
-   Total  Reached:{total2/1000000} Algo<br/>
+   Total  Reached:{500000/1000000} Algo<br/>
   </div>
 </div>
 <Link to="/view2" className="btn btn-primary">View</Link>

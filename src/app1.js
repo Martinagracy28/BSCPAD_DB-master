@@ -30,7 +30,7 @@ function FirstApp() {
   const[owner,setowner]= useState("");
   const[escrow,setescrow]= useState("");
   const[appid,setappid]= useState("");
-  let appId = 34658457;
+  let appId = 39139636;
 
   // user declared algod connection parameters
   //purestake api used
@@ -184,7 +184,7 @@ async function claimApp(account, index, amount) {
   // The specific App ID must be called
   // This should be changed after creation
   gtxn 0 ApplicationID
-  int 37005781
+  int 39139636
   ==
   &&
   // The applicaiton call must either be
@@ -294,7 +294,7 @@ async function main() {
 
     // create new application
     //let appId = await createApp(algodClient, creatorAccount, approvalProgram, clearProgram, localInts, localBytes, globalInts, globalBytes);
-    let appId = 37005781;
+    let appId = 39139636;
     // opt-in to application
     // await optInApp(algodClient, userAccount, appId);
 let accounts;
@@ -427,7 +427,7 @@ async function reclaimApp(account, index, amount) {
   // The specific App ID must be called
   // This should be changed after creation
   gtxn 0 ApplicationID
-  int 38490519
+  int 39139636
   ==
   &&
   // The applicaiton call must either be
@@ -540,7 +540,7 @@ async function main() {
 
     // create new application
     //let appId = await createApp(algodClient, creatorAccount, approvalProgram, clearProgram, localInts, localBytes, globalInts, globalBytes);
-    let appId = 38490519;
+    let appId = 39139636;
     // opt-in to application
     // await optInApp(algodClient, userAccount, appId);
 let accounts;
