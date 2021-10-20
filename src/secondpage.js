@@ -371,6 +371,7 @@ const popup1 = async()=>{
     const donate =async (event) => {
     var amt =  window.prompt("Enter the amount you want to donate"); 
     let amount = amt * 1000000;
+    
 
   global.TextEncoder = require("util").TextEncoder; 
 const algosdk = require('algosdk');
@@ -614,7 +615,7 @@ main();
          <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
    integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous"/>
  <br/>
- <p id="demo1" class="time">Starts in</p>
+ <p id="demo1" class="time"></p>
  <h3 id="demo" class="time" style={{textAlign:"center"}}>
 </h3>
         <h1 class="head1"><b>
@@ -640,9 +641,9 @@ main();
 <p><span class="tt">
 Goal Amount</span> <br/> </p>
 <p id="main1">{goal/1000000}</p>
-<p>
-<span class="tt">Amount Reached</span> <br/> </p><p id="main2"> {total/1000000}
-</p>
+{/* <p> */}
+{/* <span class="tt">Amount Reached</span> <br/> </p><p id="main2"> {total/1000000}
+</p> */}
 
       
         </Card>
@@ -658,18 +659,18 @@ Goal Amount</span> <br/> </p>
         </p>
         <br/>
         <p class="p">Progress</p>
-        <progress id="main7" value={openm} max="5" class="progress11"></progress>
+        <progress id="main7" value={total} max={goal} class="progress11"></progress>
         <div>
           <div class="container" id="main8">
             <div class="row">
-            <div class="col">
+            <div class="col-2">
             <p class="perci">
-          {}%
+          {(total/1000000)*100}%
         </p>
             </div>
               <div class="col align-self-end maxi">
               <p>
-              {}/5
+              <h6>Amount Reached:{total/1000000}</h6>
                  </p>     </div>
             
             </div>
