@@ -226,10 +226,11 @@ console.log("pushed")
 
   <div style={{backgroundColor:'black'}}>
     { opt == true ?(<div style={{backgroundColor:'black'}}>
-      <h3>Before Proceed ,optin first</h3>
+      <h3>Before Proceed ,optin first</h3><br></br>
       <button class="btn btn-primary" onClick={optin}>Optin</button>
       </div>):(<div>
-
+    <h3>Before Proceed ,optin first</h3><br></br>
+      <button class="btn btn-primary" onClick={optin}>Optin</button><br></br>
 <h3>    
  <b> Fund Start Date</b>  <br/> <span class="spantext"id="main2">{(new Date(stardt*1000)).toLocaleString()}</span>
 </h3><p class="tiny" id="main5"></p>
