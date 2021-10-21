@@ -125,7 +125,7 @@ async function readLocalState(client, account, index){
 //       }
 //   }
 // }
-
+useEffect(() =>{first()},[])
 
 const first = async () => {
   
