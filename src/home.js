@@ -12,9 +12,11 @@ import tokencontract from './tokencontract';
 import TESTToken from './TESTToken';
 import { Card } from 'react-bootstrap';
 import { setDayWithOptions } from 'date-fns/fp';
+import fireDB from './firebase';
 
 global.TextEncoder = require("util").TextEncoder; 
 const algosdk = require('algosdk');
+
 //import Background from '../src/images/aa.gif'
 //import TEST from './TEST';
 //import {BrowserRouter as Router , Route , Link , Switch , NavLink} from "react-router-dom";
@@ -34,6 +36,8 @@ function Home() {
   const[opt,setopt] = useState("");
   let appId = 39138100;
 
+
+
   // user declared algod connection parameters
   //purestake api used
   let algodServer = "https://testnet-algorand.api.purestake.io/ps2";
@@ -52,14 +56,22 @@ async function readLocalState(client, account, index){
   // let val = await client.ApplicationInformation(appId);
   // console.log("val",val)
   console.log("accinfo",accountInfoResponse);
+  if(accountInfoResponse['apps-local-state'].length ==0){
+    setopt(true);
+    console.log("wo1")
+  }
   for (let i = 0; i < accountInfoResponse['apps-local-state'].length; i++) { 
       if (accountInfoResponse['apps-local-state'][i].id == index) {
-          console.log("User's local state:");
-          for (let n = 0; n < accountInfoResponse['apps-local-state'][i][`key-value`].length; n++) {
-              console.log(accountInfoResponse['apps-local-state'][i][`key-value`][n]);
-          }
+          // 
+          setopt(false);
+        console.log("wo")
+      }
+      else{
+        setopt(true);
+        console.log("wo1")
       }
   }
+   accountInfoResponse = await client.accountInformation("USTLFIOCUYDTURGK5E3KL63HB3TEALMXUDXS73VKPE6DQMVXOOJDHRINHQ").do();
   for (let i = 0; i < accountInfoResponse['created-apps'].length; i++) { 
     if (accountInfoResponse['created-apps'][i].id == index) {
         console.log("Application's global state:");
@@ -67,30 +79,30 @@ async function readLocalState(client, account, index){
             console.log(accountInfoResponse['created-apps'][i]['params']['global-state'][n]);
             let enc = accountInfoResponse['created-apps'][i]['params']['global-state'][n];
             var decodedString = window.atob(enc.key);
-            if(decodedString == "StartDate"){
-              setstartdt(enc.value.uint);
-            }
-            else if(decodedString == "EndDate"){
-              setenddt(enc.value.uint);
-            }
-            else if(decodedString == "FundCloseDate"){
-              setclsdt(enc.value.uint);
-            }
-            else if(decodedString == "Total"){
+            // if(decodedString == "StartDate"){
+            //   setstartdt(enc.value.uint);
+            // }
+            // else if(decodedString == "EndDate"){
+            //   setenddt(enc.value.uint);
+            // }
+            // else if(decodedString == "FundCloseDate"){
+            //   setclsdt(enc.value.uint);
+            // }
+           if(decodedString == "Total"){
               settotal(enc.value.uint);
             }
             else if(decodedString == "Goal"){
               setgoal(enc.value.uint);
             }
-            else if(decodedString == "Receiver"){
-              setrec(enc.value.bytes);
-            }
-            else if(decodedString == "Creator"){
-              setowner(enc.value.bytes);
-            }
-            else if(decodedString == "Escrow"){
-              setescrow(enc.value.bytes);
-            }
+            // else if(decodedString == "Receiver"){
+            //   setrec(enc.value.bytes);
+            // }
+            // else if(decodedString == "Creator"){
+            //   setowner(enc.value.bytes);
+            // }
+            // else if(decodedString == "Escrow"){
+            //   setescrow(enc.value.bytes);
+            // }
             
             console.log("decoded",decodedString);
         }
@@ -116,30 +128,39 @@ async function readLocalState(client, account, index){
 //       }
 //   }
 // }
+
+useEffect(() =>{first()},[accounts,goal,opt])
 const first = async () => {
+  
+  var firebase= fireDB.database().ref("Appid");
+  console.log("firebase",(firebase))
+
+  firebase.child("39138100").once("value", function(snapshot) {
+    console.log(snapshot.val());
+    console.log("closed",snapshot.val().closed)
+   setstartdt(snapshot.val().startdate);
+   setclsdt(snapshot.val().enddate)
+   
+  }, function (error) {
+    console.log("Error: " + error.code);
+ });
+ 
+
+
   var account = localStorage.getItem("wallet");
   console.log("wallet,",account)
   setaccount(account)
   setappid(appId);
   // read local state of application from user account
     await readLocalState(client, account, appId);
-    if(goal==0){
-      setopt(true);
-    }
-    else{
-      setopt(false);
-    }
+   
     // read global state of application
     // var account = localStorage.getItem("wallet");
     // await readGlobalState(client, account, appId);   
   }
-  useEffect(() =>{first()},[accounts,goal])
+  
     
- 
-  const optin = async (event) =>{
- 
-
-const waitForConfirmation = async function (client, txId) {
+  const waitForConfirmation = async function (client, txId) {
     let status = (await client.status().do());
     let lastRound = status["last-round"];
       while (true) {
@@ -153,11 +174,12 @@ const waitForConfirmation = async function (client, txId) {
         await client.statusAfterBlock(lastRound).do();
       }
     };
+   const optin = async (event) =>{
 
-// optIn
-async function optInApp(client, account, index) {
     // define sender
-    let sender = account;
+    let sender = accounts;
+    let index = appid;
+     console.log("appid",appid);
     console.log("sender complete", sender);
     let txID;
 	// get node suggested parameters
@@ -170,11 +192,6 @@ async function optInApp(client, account, index) {
     let txn = algosdk.makeApplicationOptInTxn(sender, params, index);
     console.log("txn complete")
     let txId = txn.txID().toString();
-
-    // Sign the transaction
-    // let signedTxn = txn.signTxn(account.sk);
-    // console.log("Signed transaction with txID: %s", txId);
-
     let txn_b64 = AlgoSigner.encoding.msgpackToBase64(txn.toByte());
     let signedTxs = await AlgoSigner.signTxn([{txn:txn_b64}]);
     console.log("txn signing")
@@ -182,89 +199,16 @@ async function optInApp(client, account, index) {
     let transcat = await client.sendRawTransaction(signedT).do();
     console.log("txn working")
     await waitForConfirmation(client, transcat.txId);
-    // AlgoSigner.signTxn([{txn: txn_b64}])
-  
-    // .then(async (d) => {
-    //   let signedTxs = d;
-    //   // Submit the transaction
-    //   console.log("sign", signedTxs[0].blob);
-    // // await client.sendRawTransaction(signedTxs[0].blob).do();
-
-    // AlgoSigner.send({
-    //   ledger: 'TestNet',
-    //   tx: signedTxs[0].blob
-    // })
-    // .then((d) => {
-    //   txID = d;
-    //   // document.getElementById("txid").innerHTML = "Transaction ID : " + JSON.stringify(txID);
-    //   console.log(txID);
-    // })
-    // .catch((e) => {
-    //   console.error(e);
-    // });
-
-
-
-    // // Wait for confirmation
-    // await waitForConfirmation(client, txId);
-
-    // // display results
-    // let transactionResponse = await client.pendingTransactionInformation(txId).do();
-    // console.log("Opted-in to app-id:",transactionResponse['txn']['txn']['apid'])
-    // })
-     
-    //  .catch((e) => {
-    //      console.error(e);
-    //  });
-}
-
-
-
-
-
-async function main() {
-    try {
-    // initialize an algodClient
-    let algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-
-    let appId = 39138100;
-    // opt-in to application
-    let accounts;
-    AlgoSigner.connect()
-    .then((d) => {
-      AlgoSigner.accounts({
-        ledger: 'TestNet'
-      })
-      .then(async (d) => {
-        accounts = d;
-      console.log("Address 1", d[0]);
-        await optInApp(algodClient, d[3].address, appId);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-    })
-    .catch((e) => {
-      console.error(e);
-    });
-
-
-
-
-   
-    }
-    catch (err){
-        console.log("err", err);  
-    }
-}
-
-main();
-first();
-
-    } 
+    alert("optin Completed");
+    first();
+  var firebase= fireDB.database().ref("optinAddress");
+firebase.push({accounts});
+console.log("pushed")
+     } 
   
  
     return (
+      
       <div class=" text App" style={{backgroundColor:'black'}}>
        
        <br/>
@@ -290,29 +234,26 @@ first();
       </div>):(<div>
 
 <h3>    
- <b> Fund Start Date</b>  <br/> <span class="spantext"id="main1">{(new Date(stardt*1000)).toLocaleString()}</span>
+ <b> Fund Start Date</b>  <br/> <span class="spantext"id="main2">{(new Date(stardt*1000)).toLocaleString()}</span>
 </h3><p class="tiny" id="main5"></p>
 <p class="tiny"id="main6"></p>
 <p id="dem" class="pp">
 
 </p>
 <h3>
-  <b>Goal Amount(ALGOS) </b><br/> <span class="spantext"id="main2">{goal/1000000} </span>
+  <b>Goal Amount(ALGOS) </b><br/> <span class="spantext"id="main3">{goal/1000000} </span>
 </h3><p class="tiny"id="ap"></p>
 <p class="tiny"id="ap1"></p>
 
 <h3>
-   <b>Total Amount Reached</b> <br/><span class="spantext"id="main3">{total/1000000} </span>
+   <b>Total Amount Reached</b> <br/><span class="spantext"id="main4">{total/1000000} </span>
 </h3><br/> 
 <p class="tiny" id="main"></p>
 
 
+
 <h3>
-   <b>FundEndDate</b> <br/><span class="spantext"id="main3">{(new Date(enddt*1000)).toLocaleString()} </span>
-</h3><br/> 
-<p class="tiny" id="main"></p>
-<h3>
-   <b>Fund CloseDate</b> <br/><span class="spantext"id="main3">{(new Date(clsdt*1000)).toLocaleString()} </span>
+   <b>Fund CloseDate</b> <br/><span class="spantext"id="main5">{(new Date(clsdt*1000)).toLocaleString()} </span>
 </h3><br/> 
 <p class="tiny" id="main"></p>
 </div>)

@@ -28,32 +28,68 @@ const algosdk = require('algosdk');
 
 function App(){
   const [accounts, setaccount] = useState("");
- 
+  const [isOpenbutton, setIsOpenbutton] = useState(true);
+  const [isList, setisList] = useState([]);
+  const [isClick, setClick] = useState();
+  const [isOpenlist, setIsOpenlist] = useState(false);
   
 
-const connect = async()=>{
-  AlgoSigner.connect()
-  .then((d) => {
-    AlgoSigner.accounts({
-      ledger: 'TestNet'
-    })
-    .then(async (d) => {
-     let account = d[3].address;
-     setaccount(account);
-     localStorage.setItem("wallet",account)
-     document.getElementById("cc").style.visibility="hidden"
+// const connect = async()=>{
+//   AlgoSigner.connect()
+//   .then((d) => {
+//     AlgoSigner.accounts({
+//       ledger: 'TestNet'
+//     })
+//     .then(async (d) => {
+//      let account = d[3].address;
+//      setaccount(account);
+//      localStorage.setItem("wallet",account)
+//      document.getElementById("cc").style.visibility="hidden"
      
-    })
-    .catch((e) => {
-      console.error(e);
-    });
+//     })
+//     .catch((e) => {
+//       console.error(e);
+//     });
+//   })
+//   .catch((e) => {
+//     console.error(e);
+//   });
+  
+//   //window.location.reload();
+//    }
+const onChangeOption=async(e)=>{
+  let a=await setClick(e)
+  console.log("setClick = ", e);
+  localStorage.setItem("wallet",e)
+  setaccount(e);
+  //setIsOpenbutton(true)
+}
+   const connect = () => {
+    setIsOpenbutton(false)
+    AlgoSigner.connect()
+.then((d) => {
+  AlgoSigner.accounts({
+    ledger: 'TestNet'
+  })
+  .then((d) => {
+    let accounts = d;
+    //document.getElementById("listacc").innerHTML=isClick;
+    setClick(accounts[0].address);
+    console.log("listaccount",d)
+    setisList(d)
+    setIsOpenlist(true)
   })
   .catch((e) => {
     console.error(e);
-  });
+  }); 
   
-  //window.location.reload();
-   }
+  
+})
+.catch((e) => {
+  console.error(e);
+});
+  }
+  
       
   
   
@@ -91,10 +127,27 @@ History{' '}
             </Link>
     </Navbar.Brand>
     <Navbar.Collapse className="justify-content-end">
-    <Button  onClick={connect} id="cc" variant="flat" style={{ backgroundColor: "#fa3455", color: "white"}}> Connect Wallet</Button>
+    {/* <Button  onClick={connect} id="cc" variant="flat" style={{ backgroundColor: "#fa3455", color: "white"}}> Connect Wallet</Button> */}
 
-<Link exact to="/h">
-<Button variant="flat" id="ccc" style={{ backgroundColor: "#fa3455", color: "white"}}> {accounts}</Button>
+<Link exact to="/">
+{/* <Button variant="flat" id="ccc" style={{ backgroundColor: "#fa3455", color: "white"}}> {accounts}</Button> */}
+<div>
+
+{isOpenbutton ? 
+<>
+  <button variant="flat"  style={{ backgroundColor: "#fa3455", color: "white"}} className = "button button2" onClick={()=>connect()} id="listacc">
+                  Connect Wallet 
+                </button>
+                </> : <> 
+                <br></br>
+                <select className = "drop" name="select1" onClick={(e)=> onChangeOption(e.target.value)}>
+    {isList.map(fbb =>    
+      <option  style={{ backgroundColor: "#fa3455", color: "white"}} key={fbb.address} value={fbb.address} >{fbb.address}</option>
+    )};
+  </select>
+
+                </>}
+    </div>
 <label class="mr-3 mt-2" style={{color:"white"}}>
 
 </label>

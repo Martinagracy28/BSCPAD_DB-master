@@ -96,24 +96,7 @@ async function readLocalState(client, account, index){
     }
 }
 }
-// // read global state of application
-// async function readGlobalState(client, account, index){
-//   let accountInfoResponse =  client.accountInformation(account).do();
-//    console.log("accinfo",accountInfoResponse);
-//   for (let i = 0; i < accountInfoResponse['created-apps'].length; i++) { 
-//       if (accountInfoResponse['created-apps'][i].id == index) {
-//           console.log("Application's global state:");
-//           for (let n = 0; n < accountInfoResponse['created-apps'][i]['params']['global-state'].length; n++) {
-//               console.log(accountInfoResponse['created-apps'][i]['params']['global-state'][n]);
-//               let enc = accountInfoResponse['created-apps'][i]['params']['global-state'][n];
-//               var decodedString = window.atob(enc.key);
-//               setkey.push(decodedString);
-//               setvalue.push(enc.value);
-//               console.log(decodedString);
-//           }
-//       }
-//   }
-// }
+
 const first = async () => {
   var account = localStorage.getItem("wallet");
   console.log("wallet,",account)
@@ -127,32 +110,7 @@ const first = async () => {
   }
   useEffect(() =>{first()},[accounts])
     
- 
-  const claim = async () =>{
-
-  
-// declare application state storage (immutable)
-// let localInts = 1;
-// let localBytes = 0;
-// let globalInts = 5;
-// let globalBytes = 3;
-
-//var fs = require('fs'),
-
-
-
-// helper function to compile program source  
-// async function compileProgram(client, programSource) {
-//     let encoder = new TextEncoder();
-//     let programBytes = encoder.encode(programSource);
-//     let compileResponse = await client.compile(programBytes).do();
-//     let compiledBytes = new Uint8Array(Buffer.from(compileResponse.result, "base64"));
-//     return compiledBytes;
-// }
-
-// helper function to await transaction confirmation
-// Function used to wait for a tx confirmation
-const waitForConfirmation = async function (client, txId) {
+  const waitForConfirmation = async function (client, txId) {
     let status = (await client.status().do());
     let lastRound = status["last-round"];
       while (true) {
@@ -167,9 +125,10 @@ const waitForConfirmation = async function (client, txId) {
       }
     };
 
-
-
-async function claimApp(account, index, amount) {
+  const claim = async () =>{
+    if(accounts == "K3ASZETXZ47FOFEEDG7WVU4PNFOTKE32HFWAE7ODFLUUYAYVKDBJRWLRV4"){
+   let account = accounts;
+   let index = appid;
 
   var escrowdata = `#pragma version 2
   global GroupSize
@@ -211,7 +170,7 @@ async function claimApp(account, index, amount) {
   `;
     
   // define sender
-  let sender = account;
+  let sender = accounts;
   let client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 
  // get node suggested parameters
@@ -242,7 +201,7 @@ let sender1 = lsig.address();
 console.log("logic",sender1)
     let receiver = sender;
     // let receiver = "<receiver-address>"";
-    
+    let amount = 499000;
     let closeToRemaninder = sender;
     let note = undefined;
     let transaction2 = algosdk.makePaymentTxnWithSuggestedParams(sender1, receiver, amount, closeToRemaninder, note, params)
@@ -275,145 +234,16 @@ console.log("logic",sender1)
      console.log("id", trans.txId);
    await waitForConfirmation(client, trans.txId);
     console.log("signed")
-    
-}
-
-
-
-
-
-async function main() {
-    try {
-    // initialize an algodClient
-    let algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-
-   
-    // compile programs 
-    // let approvalProgram = await compileProgram(algodClient, approvalProgramSourceInitial);
-    // let clearProgram = await compileProgram(algodClient, clearProgramSource);
-
-    // create new application
-    //let appId = await createApp(algodClient, creatorAccount, approvalProgram, clearProgram, localInts, localBytes, globalInts, globalBytes);
-    let appId = 39139636;
-    // opt-in to application
-    // await optInApp(algodClient, userAccount, appId);
-let accounts;
-    AlgoSigner.connect()
-    .then((d) => {
-      AlgoSigner.accounts({
-        ledger: 'TestNet'
-      })
-      .then(async (d) => {
-        accounts = d;
-        let amount = 1000000;
-        await claimApp(accounts[1].address, appId , amount);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-    })
-    .catch((e) => {
-      console.error(e);
-    });
-
-
-
-    // // call application without arguments
- //atomic involved
-
-    // // read local state of application from user account
-    // await readLocalState(algodClient, userAccount, appId);
-
-    // // read global state of application
-    // await readGlobalState(algodClient, creatorAccount, appId);
-
-    // // update application
-    // approvalProgram = await compileProgram(algodClient, approvalProgramSourceRefactored);
-    // await updateApp(algodClient, creatorAccount, appId, approvalProgram, clearProgram);
-
-    // // call application with arguments
-    // let ts = new Date(new Date().toUTCString());
-    // console.log(ts)
-    // let appArgs = [];
-    // console.log("(line:516) appArgs = ",appArgs)
-    // appArgs.push(new Uint8Array(Buffer.from(ts)));
-    // await callApp(algodClient, userAccount, appId, appArgs);
-
-    // read local state of application from user account
-    // await readLocalState(algodClient, userAccount, appId);
-
-    // // close-out from application
-    // await closeOutApp(algodClient, userAccount, appId)
-
-    // // opt-in again to application
-    // await optInApp(algodClient, userAccount, appId)
-
-    // // call application with arguments
-    // await callApp(algodClient, userAccount, appId, appArgs)
-
-    // // read local state of application from user account
-    // await readLocalState(algodClient, userAccount, appId);
-
-    // // delete application
-    // await deleteApp(algodClient, creatorAccount, appId)
-
-    // // clear application from user account
-    // await clearApp(algodClient, userAccount, appId)
-
-    }
-    catch (err){
-        console.log("err", err);  
-    }
-}
-
-main();
-
-
+    alert("Claimed Successfully");
+    first();
+  }
+  else{
+    alert("Claim Called only by Receiver,Not an User");
+  }
   }
    
   const reclaim = async () =>{
-     
- 
-// declare application state storage (immutable)
-// let localInts = 1;
-// let localBytes = 0;
-// let globalInts = 5;
-// let globalBytes = 3;
-
-//var fs = require('fs'),
-
-
-
-// helper function to compile program source  
-// async function compileProgram(client, programSource) {
-//     let encoder = new TextEncoder();
-//     let programBytes = encoder.encode(programSource);
-//     let compileResponse = await client.compile(programBytes).do();
-//     let compiledBytes = new Uint8Array(Buffer.from(compileResponse.result, "base64"));
-//     return compiledBytes;
-// }
-
-// helper function to await transaction confirmation
-// Function used to wait for a tx confirmation
-const waitForConfirmation = async function (client, txId) {
-    let status = (await client.status().do());
-    let lastRound = status["last-round"];
-      while (true) {
-        const pendingInfo = await client.pendingTransactionInformation(txId).do();
-        if (pendingInfo["confirmed-round"] !== null && pendingInfo["confirmed-round"] > 0) {
-          //Got the completed Transaction
-          console.log("Transaction " + txId + " confirmed in round " + pendingInfo["confirmed-round"]);
-          break;
-        }
-        lastRound++;
-        await client.statusAfterBlock(lastRound).do();
-      }
-    };
-
-
-
-async function reclaimApp(account, index, amount) {
-
+  let index = appid;
   var escrowdata = `#pragma version 2
   global GroupSize
   int 2
@@ -454,7 +284,7 @@ async function reclaimApp(account, index, amount) {
   `;
     
   // define sender
-  let sender = account;
+  let sender = accounts;
   let client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
 
  // get node suggested parameters
@@ -521,80 +351,13 @@ console.log("logic",sender1)
      console.log("id", trans.txId);
    await waitForConfirmation(client, trans.txId);
     console.log("signed")
-    
-}
-
-
-
-
-
-async function main() {
-    try {
-    // initialize an algodClient
-    let algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-
-   
-    // compile programs 
-    // let approvalProgram = await compileProgram(algodClient, approvalProgramSourceInitial);
-    // let clearProgram = await compileProgram(algodClient, clearProgramSource);
-
-    // create new application
-    //let appId = await createApp(algodClient, creatorAccount, approvalProgram, clearProgram, localInts, localBytes, globalInts, globalBytes);
-    let appId = 39139636;
-    // opt-in to application
-    // await optInApp(algodClient, userAccount, appId);
-let accounts;
-    AlgoSigner.connect()
-    .then((d) => {
-      AlgoSigner.accounts({
-        ledger: 'TestNet'
-      })
-      .then(async (d) => {
-        accounts = d;
-        let amount = 499000;
-        await reclaimApp(accounts[3].address, appId , amount);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-    })
-    .catch((e) => {
-      console.error(e);
-    });
-
-
-
-    }
-    catch (err){
-        console.log("err", err);  
-    }
-}
-
-main();
-
+ 
   }
    const optin = async (event) =>{
  
-
-const waitForConfirmation = async function (client, txId) {
-    let status = (await client.status().do());
-    let lastRound = status["last-round"];
-      while (true) {
-        const pendingInfo = await client.pendingTransactionInformation(txId).do();
-        if (pendingInfo["confirmed-round"] !== null && pendingInfo["confirmed-round"] > 0) {
-          //Got the completed Transaction
-          console.log("Transaction " + txId + " confirmed in round " + pendingInfo["confirmed-round"]);
-          break;
-        }
-        lastRound++;
-        await client.statusAfterBlock(lastRound).do();
-      }
-    };
-
-// optIn
-async function optInApp(client, account, index) {
+let index = appid;
     // define sender
-    let sender = account;
+    let sender = accounts;
     console.log("sender complete", sender);
     let txID;
 	// get node suggested parameters
@@ -619,83 +382,8 @@ async function optInApp(client, account, index) {
     let transcat = await client.sendRawTransaction(signedT).do();
     console.log("txn working")
     await waitForConfirmation(client, transcat.txId);
-    // AlgoSigner.signTxn([{txn: txn_b64}])
-  
-    // .then(async (d) => {
-    //   let signedTxs = d;
-    //   // Submit the transaction
-    //   console.log("sign", signedTxs[0].blob);
-    // // await client.sendRawTransaction(signedTxs[0].blob).do();
+   alert("Optin Succeed")
 
-    // AlgoSigner.send({
-    //   ledger: 'TestNet',
-    //   tx: signedTxs[0].blob
-    // })
-    // .then((d) => {
-    //   txID = d;
-    //   // document.getElementById("txid").innerHTML = "Transaction ID : " + JSON.stringify(txID);
-    //   console.log(txID);
-    // })
-    // .catch((e) => {
-    //   console.error(e);
-    // });
-
-
-
-    // // Wait for confirmation
-    // await waitForConfirmation(client, txId);
-
-    // // display results
-    // let transactionResponse = await client.pendingTransactionInformation(txId).do();
-    // console.log("Opted-in to app-id:",transactionResponse['txn']['txn']['apid'])
-    // })
-     
-    //  .catch((e) => {
-    //      console.error(e);
-    //  });
-}
-
-
-
-
-
-async function main() {
-    try {
-    // initialize an algodClient
-    let algodClient = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-
-    let appId = 39138100;
-    // opt-in to application
-    let accounts;
-    AlgoSigner.connect()
-    .then((d) => {
-      AlgoSigner.accounts({
-        ledger: 'TestNet'
-      })
-      .then(async (d) => {
-        accounts = d;
-      console.log("Address 1", d[0]);
-        await optInApp(algodClient, d[1].address, appId);
-      })
-      .catch((e) => {
-        console.error(e);
-      });
-    })
-    .catch((e) => {
-      console.error(e);
-    });
-
-
-
-
-   
-    }
-    catch (err){
-        console.log("err", err);  
-    }
-}
-
-main();
 first();
 
     } 
@@ -744,12 +432,14 @@ first();
 <div>
     { total >= goal ?(
     <div>
+       <button class="btn btn-primary" onClick={optin}>Optin</button><br></br>
+       <br></br>
     <button class="btn btn-primary" onClick={claim}>Claim</button>
 
     </div>):
 
     (<div>
-       <button class="btn btn-primary" onClick={optin}>Reclaim</button><br></br>
+      
     <button class="btn btn-primary" onClick={reclaim}>Reclaim</button>
     </div>)
     }

@@ -40,6 +40,8 @@ function FourthPage(){
   const[rec2,setrec2]= useState("");
   const[owner2,setowner2]= useState("");
   const[escrow2,setescrow2]= useState("");
+  const[st1,setst1]= useState([]);
+  const[st2,setst2]=useState([]);
 
   let algodServer = "https://testnet-algorand.api.purestake.io/ps2";
   let algodToken = {
@@ -49,87 +51,108 @@ function FourthPage(){
   let algodPort = "";
   
   let client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
-async function readLocalState(client, account, index1, index2){
-  let accountInfoResponse = await client.accountInformation(account).do();
-  // let val = await client.ApplicationInformation(appId);
-  // console.log("val",val)
-  console.log("accinfo",accountInfoResponse);
+// async function readLocalState(client, account, index1, index2){
+//   let accountInfoResponse = await client.accountInformation(account).do();
+//   // let val = await client.ApplicationInformation(appId);
+//   // console.log("val",val)
+//   console.log("accinfo",accountInfoResponse);
  
-  for (let i = 0; i < accountInfoResponse['created-apps'].length; i++) { 
-    if (accountInfoResponse['created-apps'][i].id == index1) {
-        console.log("Application's global state:");
-        for (let n = 0; n < accountInfoResponse['created-apps'][i]['params']['global-state'].length; n++) {
-            console.log(accountInfoResponse['created-apps'][i]['params']['global-state'][n]);
-            let enc = accountInfoResponse['created-apps'][i]['params']['global-state'][n];
-            var decodedString = window.atob(enc.key);
-            // if(decodedString == "StartDate"){
-            //   setstartdt(enc.value.uint);
-            // }
-            // else if(decodedString == "EndDate"){
-            //   setenddt(enc.value.uint);
-            // }
-            // else if(decodedString == "FundCloseDate"){
-            //   setclsdt(enc.value.uint);
-            // }
-            if(decodedString == "Total"){
-              settotal(enc.value.uint);
-            }
-            else if(decodedString == "Goal"){
-              setgoal(enc.value.uint);
-            }
+//   for (let i = 0; i < accountInfoResponse['created-apps'].length; i++) { 
+//     if (accountInfoResponse['created-apps'][i].id == index1) {
+//         console.log("Application's global state:");
+//         for (let n = 0; n < accountInfoResponse['created-apps'][i]['params']['global-state'].length; n++) {
+//             console.log(accountInfoResponse['created-apps'][i]['params']['global-state'][n]);
+//             let enc = accountInfoResponse['created-apps'][i]['params']['global-state'][n];
+//             var decodedString = window.atob(enc.key);
+//             // if(decodedString == "StartDate"){
+//             //   setstartdt(enc.value.uint);
+//             // }
+//             // else if(decodedString == "EndDate"){
+//             //   setenddt(enc.value.uint);
+//             // }
+//             // else if(decodedString == "FundCloseDate"){
+//             //   setclsdt(enc.value.uint);
+//             // }
+//             if(decodedString == "Total"){
+//               settotal(enc.value.uint);
+//             }
+//             else if(decodedString == "Goal"){
+//               setgoal(enc.value.uint);
+//             }
            
             
-            console.log("decoded",decodedString);
-        }
+//             console.log("decoded",decodedString);
+//         }
         
-    }
-}
-}
-async function readLocalState1(client, account, index1, index2){
-  let accountInfoResponse2 = await client.accountInformation(account).do();
-  // let val = await client.ApplicationInformation(appId);
-  // console.log("val",val)
-  console.log("accinfo",accountInfoResponse2);
- for (let i = 0; i < accountInfoResponse2['created-apps'].length; i++) { 
-    if (accountInfoResponse2['created-apps'][i].id == index2) {
-        console.log("Application's global state:");
-        for (let n = 0; n < accountInfoResponse2['created-apps'][i]['params']['global-state'].length; n++) {
-            console.log(accountInfoResponse2['created-apps'][i]['params']['global-state'][n]);
-            let enc = accountInfoResponse2['created-apps'][i]['params']['global-state'][n];
-            var decodedString = window.atob(enc.key);
-            // if(decodedString == "StartDate"){
-            //   setstartdt2(enc.value.uint);
-            // }
-            // else if(decodedString == "EndDate"){
-            //   setenddt2(enc.value.uint);
-            // }
-            // else if(decodedString == "FundCloseDate"){
-            //   setclsdt2(enc.value.uint);
-            // }
-             if(decodedString == "Total"){
-              settotal2(enc.value.uint);
-            }
-            else if(decodedString == "Goal"){
-              setgoal2(enc.value.uint);
-            }
+//     }
+// }
+// }
+// async function readLocalState1(client, account, index1, index2){
+//   let accountInfoResponse2 = await client.accountInformation(account).do();
+//   // let val = await client.ApplicationInformation(appId);
+//   // console.log("val",val)
+//   console.log("accinfo",accountInfoResponse2);
+//  for (let i = 0; i < accountInfoResponse2['created-apps'].length; i++) { 
+//     if (accountInfoResponse2['created-apps'][i].id == index2) {
+//         console.log("Application's global state:");
+//         for (let n = 0; n < accountInfoResponse2['created-apps'][i]['params']['global-state'].length; n++) {
+//             console.log(accountInfoResponse2['created-apps'][i]['params']['global-state'][n]);
+//             let enc = accountInfoResponse2['created-apps'][i]['params']['global-state'][n];
+//             var decodedString = window.atob(enc.key);
+//             // if(decodedString == "StartDate"){
+//             //   setstartdt2(enc.value.uint);
+//             // }
+//             // else if(decodedString == "EndDate"){
+//             //   setenddt2(enc.value.uint);
+//             // }
+//             // else if(decodedString == "FundCloseDate"){
+//             //   setclsdt2(enc.value.uint);
+//             // }
+//              if(decodedString == "Total"){
+//               settotal2(enc.value.uint);
+//             }
+//             else if(decodedString == "Goal"){
+//               setgoal2(enc.value.uint);
+//             }
             
             
-            console.log("decoded",decodedString);
-        }
+//             console.log("decoded",decodedString);
+//         }
         
-    }
-}
-}
-useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
+//     }
+// }
+// }
+useEffect(() =>{first()},[st1,st2,clsdt,clsdt2,stardt,stardt2])
   const first = async () => {
+
+
+  var firebase= fireDB.database().ref("Appid");
+  console.log("firebase",firebase)
+  firebase.child("39139636").once("value", function(snapshot) {
+    console.log(snapshot.val());
+    setst1(snapshot.val());
+    
+  }, function (error) {
+    console.log("Error: " + error.code);
+ });
+ firebase.child("39142095").once("value", function(snapshot) {
+  console.log(snapshot.val());
+  setst2(snapshot.val());
+  
+}, function (error) {
+  console.log("Error: " + error.code);
+});
+ 
+
+
     var account = localStorage.getItem("wallet");
     console.log("wallet,",account)
     setaccount(account)
     setappid(39139636);
     setappid2(39142095);
     // read local state of application from user account
-      await readLocalState(client, account, appid ,appid2);
-      await readLocalState1(client, account, appid ,appid2);
+      // await readLocalState(client, account, appid ,appid2);
+      // await readLocalState1(client, account, appid ,appid2);
   }
    
     
@@ -189,13 +212,13 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
               <h4>APPID</h4>
               <p>{ appid}</p>
               <h4>Goal</h4>
-              <p>  { 1000000/1000000 }</p>
+              <p>  { st1.goal/1000000 }</p>
               {/* <h4>Fund start Date</h4> */}
               {/* <p>  {(new Date(stardt*1000)).toLocaleString() }</p> */}
-              <progress id="main7" value={1000000} max="1000000" class="progress11"></progress>
+              <progress id="main7" value={st1.total} max={st1.goal} class="progress11"></progress>
   <div class="row">
   <div class="col-4">
-    {(1000000/1000000)*100}%
+    {(st1.total/st1.goal)*100}%
   </div>
   <div class="col-8">
    Total  Reached:{1000000/1000000} Algo<br/>
@@ -232,16 +255,16 @@ useEffect(() =>{first()},[clsdt,clsdt2,stardt,stardt2])
               <h4>APPID</h4>
               <p>{ appid2}</p>
               <h4>Goal</h4>
-              <p>  { 500000/1000000 }</p>
+              <p>  { st2.total/1000000 }</p>
               {/* <h4>Fund start Date</h4>
               <p>  {(new Date(stardt2*1000)).toLocaleString() }</p> */}
-              <progress id="main7" value={500000} max="1000000" class="progress11"></progress>
+              <progress id="main7" value={st2.total} max="1000000" class="progress11"></progress>
   <div class="row">
   <div class="col-4">
-    {(500000/1000000)*100}%
+    {(st2.goal/1000000)*100}%
   </div>
   <div class="col-8">
-   Total  Reached:{500000/1000000} Algo<br/>
+   Total  Reached:{st2.total/1000000} Algo<br/>
   </div>
 </div>
 <Link to="/view2" className="btn btn-primary">View</Link>
