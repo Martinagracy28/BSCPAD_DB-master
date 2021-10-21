@@ -56,10 +56,7 @@ async function readLocalState(client, account, index){
   // let val = await client.ApplicationInformation(appId);
   // console.log("val",val)
   console.log("accinfo",accountInfoResponse);
-  if(accountInfoResponse['apps-local-state'].length ==0){
-    setopt(true);
-    console.log("wo1")
-  }
+  
   for (let i = 0; i < accountInfoResponse['apps-local-state'].length; i++) { 
       if (accountInfoResponse['apps-local-state'][i].id == index) {
           // 
@@ -129,7 +126,7 @@ async function readLocalState(client, account, index){
 //   }
 // }
 
-useEffect(() =>{first()},[accounts,goal,opt])
+
 const first = async () => {
   
   var firebase= fireDB.database().ref("Appid");
