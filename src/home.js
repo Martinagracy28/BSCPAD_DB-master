@@ -246,7 +246,7 @@ function Home() {
     return
     check_parms:
     // donate
-    txna ApplicationArgs 0
+    gtxna 0 ApplicationArgs 0
     byte "donate"
     ==
     gtxn 1 Amount
@@ -426,7 +426,7 @@ function Home() {
     extract3
     store 6
     load 6
-    gtxn 1 Sender
+    gtxna 0 ApplicationArgs 1
     ==
     bnz donate
     load 4
