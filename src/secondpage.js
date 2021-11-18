@@ -202,6 +202,8 @@ const popup1 = async()=>{
 
   let appArgs = [];
   appArgs.push(new Uint8Array(Buffer.from("donate")));
+let decAddr = algosdk.decodeAddress('EGUSS7HHM3ODVPW3Z2L55WPCZCR4TWSN2VVAKYPZKYEUER5BXM5N6YNH7I');
+appArgs.push(decAddr.publicKey);
   console.log("(line:516) appArgs = ",appArgs)
   let recv_escrow = localStorage.getItem("escrow");
   // create unsigned transaction
