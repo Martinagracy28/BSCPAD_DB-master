@@ -27,23 +27,49 @@ function FirstApp() {
   const[goal,setgoal] = useState("");
   const[total,settotal] = useState("");
   const[rec,setrec]= useState("");
-  const[owner,setowner]= useState("");
+  const[creator,setCreator]= useState("");
   const[escrow,setescrow]= useState("");
   const[appid,setappid]= useState("");
-  let appId = 39139636;
 
+  let appId = localStorage.getItem("appId");
+  console.log("App ID =", appId);
   // user declared algod connection parameters
   //purestake api used
   let algodServer = "https://testnet-algorand.api.purestake.io/ps2";
+  let indexServer = "https://testnet-algorand.api.purestake.io/idx2"
   let algodToken = {
     'X-API-Key': '9oXsQDRlZ97z9mTNNd7JFaVMwhCaBlID2SXUOJWl'
   };
 
   let algodPort = "";
-  
+  let indexClient = new algosdk.Indexer(algodToken, indexServer, algodPort);
   let client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
  
   
+const globalState = async (client, index) =>
+{
+      try {
+        const r = await AlgoSigner.indexer({
+          ledger: 'TestNet',
+          path: `/v2/applications/${index}`
+        });
+        console.log("R value", r);
+        setrec(JSON.stringify(r['application']['params']['global-state'][0]['value'][`bytes`]));
+        setstartdt(JSON.stringify(r['application']['params']['global-state'][1]['value'][`uint`]));
+        settotal(JSON.stringify(r['application']['params']['global-state'][2]['value'][`uint`]));
+        setCreator(JSON.stringify(r['application']['params']['global-state'][3]['value'][`bytes`]));
+        setenddt(JSON.stringify(r['application']['params']['global-state'][4]['value'][`uint`]));
+        setclsdt(JSON.stringify(r['application']['params']['global-state'][5]['value'][`uint`]));
+        setgoal(JSON.stringify(r['application']['params']['global-state'][6]['value'][`uint`]));
+        setescrow(JSON.stringify(r['application']['params']['global-state'][7]['value'][`bytes`]));
+        //return JSON.stringify(r['application']['params']['global-state'][7]['value'][`bytes`], null, 2);
+      } catch (e) {
+        console.error(e);
+        return JSON.stringify(e, null, 2);
+      }
+}
+
+
 // read local state of application from user account
 async function readLocalState(client, account, index){
   let accountInfoResponse = await client.accountInformation(account).do();
@@ -84,7 +110,7 @@ async function readLocalState(client, account, index){
               setrec(enc.value.bytes);
             }
             else if(decodedString == "Creator"){
-              setowner(enc.value.bytes);
+              //setowner(enc.value.bytes);
             }
             else if(decodedString == "Escrow"){
               setescrow(enc.value.bytes);
@@ -103,10 +129,10 @@ const first = async () => {
   setaccount(account)
   setappid(appId);
   // read local state of application from user account
-    await readLocalState(client, account, appId);
+    //await readLocalState(client, account, appId);
     // read global state of application
     // var account = localStorage.getItem("wallet");
-    // await readGlobalState(client, account, appId);   
+    await globalState(indexClient, appId);   
   }
   useEffect(() =>{first()},[accounts])
     
@@ -126,48 +152,51 @@ const first = async () => {
     };
 
   const claim = async () =>{
-    if(accounts == "K3ASZETXZ47FOFEEDG7WVU4PNFOTKE32HFWAE7ODFLUUYAYVKDBJRWLRV4"){
+    if(accounts == "EGUSS7HHM3ODVPW3Z2L55WPCZCR4TWSN2VVAKYPZKYEUER5BXM5N6YNH7I"){
    let account = accounts;
-   let index = appid;
+   let index = parseInt(localStorage.getItem("appId"));
 
-  var escrowdata = `#pragma version 2
-  global GroupSize
-  int 2
-  ==
-  // The first transaction must be 
-  // an ApplicationCall (ie call stateful smart contract)
-  gtxn 0 TypeEnum
-  int 6
-  ==
-  &&
-  // The specific App ID must be called
-  // This should be changed after creation
-  gtxn 0 ApplicationID
-  int 39139636
-  ==
-  &&
-  // The applicaiton call must either be
-  // A general applicaiton call or a delete
-  // call
-  gtxn 0 OnCompletion
-  int NoOp
-  ==
-  int DeleteApplication
-  gtxn 0 OnCompletion
-  ==
-  ||
-  &&
-  // verify neither transaction
-  // contains a rekey
-  gtxn 1 RekeyTo
-  global ZeroAddress
-  ==
-  &&
-  gtxn 0 RekeyTo
-  global ZeroAddress
-  ==
-  &&
-  `;
+
+   let escrowdata = `#pragma version 5
+   global GroupSize
+   int 2
+   ==
+   // The first transaction must be 
+   // an ApplicationCall (ie call stateful smart contract)
+   gtxn 0 TypeEnum
+   int 6
+   ==
+   &&
+   // The specific App ID must be called
+   // This should be changed after creation
+   gtxn 0 ApplicationID
+   int appIDreplace
+   ==
+   &&
+   // The applicaiton call must either be
+   // A general applicaiton call or a delete
+   // call
+   gtxn 0 OnCompletion
+   int NoOp
+   ==
+   int DeleteApplication
+   gtxn 0 OnCompletion
+   ==
+   ||
+   &&
+   // verify neither transaction
+   // contains a rekey
+   gtxn 1 RekeyTo
+   global ZeroAddress
+   ==
+   &&
+   gtxn 0 RekeyTo
+   global ZeroAddress
+   ==
+   &&
+   `;
+   let data2 = escrowdata.replace("appIDreplace", index.toString());
+
     
   // define sender
   let sender = accounts;
@@ -187,21 +216,19 @@ const first = async () => {
   let transaction1 = algosdk.makeApplicationNoOpTxn(sender, params, index, appArgs)
   //  let txId1 = transaction1.txID().toString();
 
-  let results = await client.compile(escrowdata).do();
+  let results = await client.compile(data2).do();
   console.log("Hash = " + results.hash);
   console.log("Result = " + results.result);
   let program = new Uint8Array(Buffer.from(results.result, "base64"));
-  let args = [];
-    args.push(algosdk.encodeUint64(123));
 
-    let lsig = algosdk.makeLogicSig(program, args);
+    let lsig = algosdk.makeLogicSig(program);
     
 
 let sender1 = lsig.address();
 console.log("logic",sender1)
     let receiver = sender;
     // let receiver = "<receiver-address>"";
-    let amount = 499000;
+    let amount = 0;
     let closeToRemaninder = sender;
     let note = undefined;
     let transaction2 = algosdk.makePaymentTxnWithSuggestedParams(sender1, receiver, amount, closeToRemaninder, note, params)

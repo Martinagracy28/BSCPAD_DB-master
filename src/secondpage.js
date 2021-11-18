@@ -33,7 +33,7 @@ function SecondPage(){
   var[openModal,setopenModal] = useState("");
   var[closeModal,setcloseModal] = useState("");
   const[appid,setappid]= useState("");
-  let appId = 39138100;
+  let appId = parseInt(localStorage.getItem("appId"));
   const [accounts, setaccount] = useState("");
   
  const[myamtgiven,setmyamtgiven] = useState("");
@@ -61,17 +61,21 @@ async function readLocalState(client, account, index){
   let accountInfoResponse = await client.accountInformation(account).do();
   // let val = await client.ApplicationInformation(appId);
   // console.log("val",val)
+  //let n;
   console.log("accinfo",accountInfoResponse);
   for (let i = 0; i < accountInfoResponse['apps-local-state'].length; i++) { 
       if (accountInfoResponse['apps-local-state'][i].id == index) {
           console.log("User's local state:");
           if(accountInfoResponse['apps-local-state'][i][`key-value`] == undefined){
+             console.log("undefined");
+            }
+          else{
             for (let n = 0; n < accountInfoResponse['apps-local-state'][i][`key-value`].length; n++) {
-              var endc = (accountInfoResponse['apps-local-state'][i][`key-value`][n]);
-              var val = endc.value.uint;  
+              let endc = (accountInfoResponse['apps-local-state'][i][`key-value`][n]);
+              let val = endc.value.uint;  
               setmyamtgiven(val);
               console.log("local", accountInfoResponse['apps-local-state'][i][`key-value`][n]);
-            }
+          }
         }
       }
   }
@@ -119,12 +123,13 @@ const first = async () => {
     openModal = () => setopenm( true );
     closeModal = () => setclosem( false );
 
-    var account = localStorage.getItem("wallet");
+    let account = localStorage.getItem("wallet");
     console.log("wallet,",account)
     setaccount(account)
     setappid(appId);
+    let index_donate = 45158379;
     // read local state of application from user account
-      await readLocalState(client, account, appId);
+      await readLocalState(client, account, index_donate);
 
   }
   useEffect(() =>{first()},[accounts,appid])
@@ -182,9 +187,10 @@ const popup1 = async()=>{
 }
     
     const donate =async (event) => {
+      console.log("AppId =",appId.toString());
     var amt =  window.prompt("Enter the amount you want to donate"); 
-    let amount = amt * 1000000;
-    let index = appid;
+    let amount = parseInt(amt);
+    let index = parseInt(localStorage.getItem("appId"));
   // define sender
   let sender = accounts;
   let client = new algosdk.Algodv2(algodToken, algodServer, algodPort);
@@ -197,11 +203,11 @@ const popup1 = async()=>{
   let appArgs = [];
   appArgs.push(new Uint8Array(Buffer.from("donate")));
   console.log("(line:516) appArgs = ",appArgs)
-
+  let recv_escrow = localStorage.getItem("escrow");
   // create unsigned transaction
   let transaction1 = algosdk.makeApplicationNoOpTxn(sender, params, index, appArgs)
   
-  let transaction2 = algosdk.makePaymentTxnWithSuggestedParams(sender, "YVZG7SY3ZOEB4MOMKXPO2GUFSXIVP4V23OLYCJXDYBZICHBIIBWD4O6N3I", amount, undefined, undefined, params);  
+  let transaction2 = algosdk.makePaymentTxnWithSuggestedParams(sender, recv_escrow, amount, undefined, undefined, params);  
   
   let txns = [transaction1, transaction2];
   let txgroup = algosdk.assignGroupID(txns);

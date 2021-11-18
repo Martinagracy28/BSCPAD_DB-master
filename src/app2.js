@@ -238,7 +238,7 @@ console.log("logic",sender1)
   const reclaim = async () =>{
     if(accounts == "USTLFIOCUYDTURGK5E3KL63HB3TEALMXUDXS73VKPE6DQMVXOOJDHRINHQ"){
     let index =appid;
-  var escrowdata = `#pragma version 2
+  var escrowdata = `#pragma version 5
   global GroupSize
   int 2
   ==
