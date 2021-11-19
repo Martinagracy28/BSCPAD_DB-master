@@ -84,6 +84,7 @@ function Home() {
     // byte "VsEsknfPPlcUhBm/atOPaV01E3o5bAJ9wyrpTAMVUMI="
     addr ZAAHQ7DV7745I5WXAQPXL4GI4ASAV3KWSWM2IJF3UBWJLEDBDISXY2MCT4
     addr EGUSS7HHM3ODVPW3Z2L55WPCZCR4TWSN2VVAKYPZKYEUER5BXM5N6YNH7I
+    concat
     store 2
     int 2 //need to give how many address in bytes
     store 7
