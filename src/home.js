@@ -81,9 +81,9 @@ function Home() {
     
     // check if the app is being created
     // if so save creator
-    byte "SSMNQOS6TE6LQKE5ANEAQUH62HFLKNTD57FI2FAWIMIRUZUVZUILP3TTCYEGUSS7HHM3ODVPW3Z2L55WPCZCR4TWSN2VVAKYPZKYEUER5BXM5N6YNH7I"
+    byte "VsEsknfPPlcUhBm/atOPaV01E3o5bAJ9wyrpTAMVUMI="
     store 2
-    int 2
+    int 2 //need to give how many address in bytes
     store 7
     int 0
     store 4
@@ -246,7 +246,7 @@ function Home() {
     return
     check_parms:
     // donate
-    gtxna 0 ApplicationArgs 0
+    txna ApplicationArgs 0
     byte "donate"
     ==
     gtxn 1 Amount
@@ -281,17 +281,19 @@ function Home() {
     txn Sender
     ==
     bz failed
-    bnz concat_1
-    
-    concat_1:
     load 2
-    txna Accounts 0
+    gtxn 0 ApplicationArgs 1
     concat
     store 2
-    txna ApplicationArgs 1
+    gtxn 0 ApplicationArgs 2
     store 7
     int 1
     return
+    
+    
+    
+   
+    
     
     
     donate:
@@ -426,7 +428,7 @@ function Home() {
     extract3
     store 6
     load 6
-    gtxna 0 ApplicationArgs 1
+    txn Sender
     ==
     bnz donate
     load 4
